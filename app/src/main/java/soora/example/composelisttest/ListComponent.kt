@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -117,9 +118,12 @@ fun TestListItem(
             .fillMaxWidth()
             .height(100.dp)
             .width(300.dp)
-            .clickable {
-                onClick.invoke(order)
-            },
+            .clickable(
+                // no ripple effect
+                interactionSource = MutableInteractionSource(),
+                indication = null,
+                onClick = {onClick.invoke(order)}
+            )
 
     ) {
         if (selected) {
