@@ -1,7 +1,8 @@
 package soora.example.composelisttest
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
@@ -9,7 +10,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Button
 import androidx.compose.material.Card
@@ -80,10 +80,9 @@ fun TestListView(
             items(count) {
                 TestListItem(
                     order = it,
-                    1f,
                     viewModel.uiState.selectedPosition != -1 && viewModel.uiState.selectedPosition == it,
                     viewModel.uiState.selectedPosition == -1 || viewModel.uiState.selectedPosition == it,
-                    onClickItem
+                    onClickItem,
                 )
             }
         }
@@ -93,7 +92,6 @@ fun TestListView(
 @Composable
 fun TestListItem(
     order: Int,
-    indicatorProgress: Float,
     selected: Boolean = false,
     focused: Boolean = false,
     onClick: (Int) -> Unit = {}
@@ -104,7 +102,7 @@ fun TestListItem(
     val progressAnimDuration = 500
     val progressAnimation by animateFloatAsState(
         targetValue = progress,
-        animationSpec = tween(durationMillis = progressAnimDuration, easing = FastOutSlowInEasing),
+        animationSpec = tween(durationMillis = progressAnimDuration, easing = LinearOutSlowInEasing),
         finishedListener = {
             finished = true
         }
@@ -122,7 +120,11 @@ fun TestListItem(
                 // no ripple effect
                 interactionSource = MutableInteractionSource(),
                 indication = null,
-                onClick = {onClick.invoke(order)}
+                onClick = {
+                    progress = 0f
+                    finished = false
+                    onClick.invoke(order)
+                }
             )
 
     ) {
@@ -135,8 +137,8 @@ fun TestListItem(
                 color = if (finished) Color.Transparent else Color.LightGray, //progress color,
                 progress = progressAnimation
             )
-            LaunchedEffect(indicatorProgress) {
-                progress = indicatorProgress
+            LaunchedEffect(progress) {
+                progress = 1f
             }
         }
         Box(contentAlignment = Alignment.Center) {
@@ -148,7 +150,7 @@ fun TestListItem(
 @Preview
 @Composable
 fun TestItemPreview() {
-    TestListItem(100, 0.5f)
+    TestListItem(20)
 }
 
 @Preview
