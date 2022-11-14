@@ -22,14 +22,23 @@ class TestViewModel @Inject constructor(
 
     //외부에서 compose list의 동작을 변경
     fun scrollToPosition(position: Int) {
-        _uiStateFlow.update {
-            it.copy(scrollToPosition = position)
-        }
-        uiState = uiState.copy(selectedPosition = position)
+        updateScrollToPosition(position) // actual scroll
+        updateSelectedPosition(position) // focused ui
+        updateProgressValue(0f) // scrollToPosition -> no select animation
     }
 
     fun updateSelectedPosition(index: Int) {
         uiState = uiState.copy(selectedPosition = index)
+    }
+
+    fun updateScrollToPosition(position: Int) {
+        _uiStateFlow.update {
+            it.copy(scrollToPosition = position)
+        }
+    }
+
+    fun updateProgressValue(value: Float) {
+        uiState = uiState.copy(progressValue = value)
     }
 
 }

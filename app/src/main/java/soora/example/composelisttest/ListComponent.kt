@@ -33,7 +33,10 @@ fun TestListView(
     count: Int,
     viewModel: TestViewModel = hiltViewModel()
 ) {
-    val onClickItem = { index: Int -> viewModel.updateSelectedPosition(index)}
+    val onClickItem = { index: Int ->
+        viewModel.updateSelectedPosition(index)
+        viewModel.updateProgressValue(1f)
+    }
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     coroutineScope.launch {
@@ -82,6 +85,7 @@ fun TestListView(
                     order = it,
                     viewModel.uiState.selectedPosition != -1 && viewModel.uiState.selectedPosition == it,
                     viewModel.uiState.selectedPosition == -1 || viewModel.uiState.selectedPosition == it,
+                    viewModel.uiState.progressValue,
                     onClickItem,
                 )
             }
@@ -94,6 +98,7 @@ fun TestListItem(
     order: Int,
     selected: Boolean = false,
     focused: Boolean = false,
+    progressTargetValue: Float = 0f,
     onClick: (Int) -> Unit = {}
 ) {
     var progress by remember { mutableStateOf(0f) }
@@ -137,8 +142,8 @@ fun TestListItem(
                 color = if (finished) Color.Transparent else Color.LightGray, //progress color,
                 progress = progressAnimation
             )
-            LaunchedEffect(progress) {
-                progress = 1f
+            LaunchedEffect(progressTargetValue) {
+                progress = progressTargetValue
             }
         }
         Box(contentAlignment = Alignment.Center) {
