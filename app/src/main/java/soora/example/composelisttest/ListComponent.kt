@@ -68,7 +68,7 @@ fun TestListView(
             Spacer(modifier = Modifier.width(5.dp))
             Button(
                 onClick = {
-                    viewModel.updateSelectedPosition(-1)
+                    viewModel.clearData()
                 }, modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()

@@ -31,7 +31,7 @@ class TestViewModel @Inject constructor(
         uiState = uiState.copy(selectedPosition = index)
     }
 
-    fun updateScrollToPosition(position: Int) {
+    private fun updateScrollToPosition(position: Int) {
         _uiStateFlow.update {
             it.copy(scrollToPosition = position)
         }
@@ -39,6 +39,11 @@ class TestViewModel @Inject constructor(
 
     fun updateProgressValue(value: Float) {
         uiState = uiState.copy(progressValue = value)
+    }
+
+    fun clearData() {
+        updateSelectedPosition(-1)
+        updateScrollToPosition(-1)
     }
 
 }
