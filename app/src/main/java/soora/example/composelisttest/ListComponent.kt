@@ -31,12 +31,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun TestListView(
     count: Int,
-    viewModel: TestViewModel = hiltViewModel()
+    viewModel: TestViewModel = hiltViewModel(),
+    clickListener: (Int) -> Unit = {}
 ) {
-    val onClickItem = { index: Int ->
-        viewModel.updateSelectedPosition(index)
-        viewModel.updateProgressValue(1f)
-    }
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     coroutineScope.launch {
@@ -86,7 +83,7 @@ fun TestListView(
                     viewModel.uiState.selectedPosition != -1 && viewModel.uiState.selectedPosition == it,
                     viewModel.uiState.selectedPosition == -1 || viewModel.uiState.selectedPosition == it,
                     viewModel.uiState.progressValue,
-                    onClickItem,
+                    clickListener,
                 )
             }
         }

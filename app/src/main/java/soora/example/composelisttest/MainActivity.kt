@@ -19,6 +19,10 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var testViewModel: TestViewModel
+    private val clickListItem = { index: Int ->
+        testViewModel.updateSelectedPosition(index)
+        testViewModel.updateProgressValue(1f)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +33,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    TestListView(count = 20, testViewModel)
+                    TestListView(count = 20, testViewModel, clickListItem)
                 }
             }
         }
