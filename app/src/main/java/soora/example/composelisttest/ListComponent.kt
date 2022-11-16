@@ -1,6 +1,7 @@
 package soora.example.composelisttest
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -36,11 +37,9 @@ fun TestListView(
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-    coroutineScope.launch {
-        viewModel.uiStateFlow.collectLatest { value ->
-            if (value.scrollToPosition > -1) {
-                listState.animateScrollToItem(value.scrollToPosition)
-            }
+    if (viewModel.uiState.scrollToPosition > -1) {
+        coroutineScope.launch {
+            listState.animateScrollToItem(viewModel.uiState.scrollToPosition)
         }
     }
     Column() {

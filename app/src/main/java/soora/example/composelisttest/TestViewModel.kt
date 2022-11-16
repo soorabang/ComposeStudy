@@ -1,6 +1,7 @@
 package soora.example.composelisttest
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -32,9 +33,10 @@ class TestViewModel @Inject constructor(
     }
 
     private fun updateScrollToPosition(position: Int) {
-        _uiStateFlow.update {
-            it.copy(scrollToPosition = position)
-        }
+//        _uiStateFlow.update {
+//            it.copy(scrollToPosition = position)
+//        }
+        uiState = uiState.copy(scrollToPosition = position)
     }
 
     fun updateProgressValue(value: Float) {
