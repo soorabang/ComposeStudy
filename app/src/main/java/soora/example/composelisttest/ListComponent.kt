@@ -143,7 +143,11 @@ fun TestListItem(
             }
         }
         Box(contentAlignment = Alignment.Center) {
-            Text("Compose List Text $order")
+            var listtext = "Compose List Text $order"
+            if (order == 0) {
+                listtext = "Go to DetailActivity"
+            }
+            Text(listtext)
         }
     }
 }
