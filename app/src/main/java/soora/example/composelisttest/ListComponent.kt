@@ -155,7 +155,7 @@ fun TestListItem(
 @Preview
 @Composable
 fun TestItemPreview() {
-    TestListItem(20)
+    TestListItem(20, selected = true, focused = true)
 }
 
 @Preview
