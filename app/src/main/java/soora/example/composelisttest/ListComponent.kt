@@ -12,10 +12,10 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -134,7 +134,8 @@ fun TestListItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(15.dp),
-                backgroundColor = Color.Transparent,
+//                backgroundColor = Color.Transparent,
+                trackColor = Color.Transparent,
                 color = if (finished) Color.Transparent else Color.LightGray, //progress color,
                 progress = progressAnimation
             )

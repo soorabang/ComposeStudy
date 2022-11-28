@@ -5,14 +5,13 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -41,14 +40,14 @@ fun SlideAnimation(isVisible: Boolean) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp),
-                style = MaterialTheme.typography.h1,
+                style = MaterialTheme.typography.displayLarge,
                 textAlign = TextAlign.Center
             )
             Spacer(Modifier.height(30.dp))
             Button(modifier = Modifier
                 .padding(20.dp)
                 .height(60.dp), onClick = { visible = false }) {
-                Text("Slide Out", style = MaterialTheme.typography.body1)
+                Text("Slide Out", style = MaterialTheme.typography.bodyLarge)
             }
         }
     }
@@ -60,7 +59,10 @@ fun AlphaAnimation(isVisible: Boolean) {
     LaunchedEffect(isVisible) {
         visible = isVisible
     }
-    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Bottom) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Bottom
+    ) {
         Spacer(Modifier.height(50.dp))
         AnimatedVisibility(
             visible = visible,
@@ -69,7 +71,10 @@ fun AlphaAnimation(isVisible: Boolean) {
                 animationSpec = tween(
                     durationMillis = 3000
                 ),
-            ) + slideInVertically (initialOffsetY = {50}, animationSpec = tween(durationMillis = 3000))
+            ) + slideInVertically(
+                initialOffsetY = { 50 },
+                animationSpec = tween(durationMillis = 3000)
+            )
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_completed),
@@ -82,8 +87,8 @@ fun AlphaAnimation(isVisible: Boolean) {
         Spacer(Modifier.height(30.dp))
         Button(modifier = Modifier
             .padding(20.dp)
-            .height(60.dp), onClick = { visible = true }) {
-            Text("Animation Alpha", style = MaterialTheme.typography.body1)
-        }
+            .height(60.dp), onClick = { visible = true },
+            content = {})
+        Text("Animation Alpha", style = MaterialTheme.typography.bodyLarge)
     }
 }
