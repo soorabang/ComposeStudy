@@ -1,8 +1,6 @@
 package soora.example.composelisttest
 
 import android.annotation.SuppressLint
-import android.util.Log
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -21,19 +19,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun TestListView(
-    count: Int,
-    viewModel: TestViewModel = hiltViewModel(),
-    clickListener: (Int) -> Unit = {}
+    count: Int, viewModel: TestViewModel = hiltViewModel(), clickListener: (Int) -> Unit = {}
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -47,10 +44,9 @@ fun TestListView(
             Button(
                 onClick = {
                     viewModel.scrollToPosition(0)
-                },
-                modifier = Modifier
+                }, modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
+                    .fillMaxWidth(), shape = RectangleShape
             ) {
                 Text("Top Scroll")
             }
@@ -60,7 +56,7 @@ fun TestListView(
                     viewModel.scrollToPosition(count - 1)
                 }, modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth()
+                    .fillMaxWidth(), shape = RectangleShape
             ) {
                 Text("Bottom Scroll")
             }
@@ -70,7 +66,7 @@ fun TestListView(
                     viewModel.clearData()
                 }, modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth()
+                    .fillMaxWidth(), shape = RectangleShape
             ) {
                 Text("Refresh List")
             }
@@ -101,40 +97,44 @@ fun TestListItem(
     var finished by remember { mutableStateOf(false) }
 
     val progressAnimDuration = 500
-    val progressAnimation by animateFloatAsState(
-        targetValue = progress,
-        animationSpec = tween(durationMillis = progressAnimDuration, easing = LinearOutSlowInEasing),
-        finishedListener = {
-            finished = true
-        }
-    )
+    val progressAnimation by animateFloatAsState(targetValue = progress, animationSpec = tween(
+        durationMillis = progressAnimDuration, easing = LinearOutSlowInEasing
+    ), finishedListener = {
+        finished = true
+    })
 
-    Card(
-        modifier = Modifier
-            .alpha(if (focused) 1f else 0.3f)
-            .padding(12.dp)
-            .border(width = 4.dp, color = Color.Black)
-            .fillMaxWidth()
-            .height(100.dp)
-            .width(300.dp)
-            .clickable(
-                // no ripple effect
-                interactionSource = MutableInteractionSource(),
-                indication = null,
-                onClick = {
-                    progress = 0f
-                    finished = false
-                    onClick.invoke(order)
+    Box(modifier = Modifier
+        .alpha(if (focused) 1f else 0.3f)
+        .padding(12.dp)
+        .border(width = 4.dp, color = Color.Black)
+        .fillMaxWidth()
+        .height(100.dp)
+        .width(300.dp)) {
+        Card(
+            modifier = Modifier
+                .clickable(
+                    // no ripple effect
+                    interactionSource = MutableInteractionSource(), indication = null, onClick = {
+                        progress = 0f
+                        finished = false
+                        onClick.invoke(order)
+                    })
+
+        ) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                var listtext = "Compose List Text $order"
+                if (order == 0) {
+                    listtext = "Go to DetailActivity"
                 }
-            )
-
-    ) {
+                Text(text = listtext, textAlign = TextAlign.Center)
+            }
+        }
         if (selected) {
             LinearProgressIndicator(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(15.dp),
-//                backgroundColor = Color.Transparent,
+                    .height(100.dp)
+                    .alpha(if (finished) 0f else 0.5f),
                 trackColor = Color.Transparent,
                 color = if (finished) Color.Transparent else Color.LightGray, //progress color,
                 progress = progressAnimation
@@ -142,13 +142,6 @@ fun TestListItem(
             LaunchedEffect(progressTargetValue) {
                 progress = progressTargetValue
             }
-        }
-        Box(contentAlignment = Alignment.Center) {
-            var listtext = "Compose List Text $order"
-            if (order == 0) {
-                listtext = "Go to DetailActivity"
-            }
-            Text(listtext)
         }
     }
 }
