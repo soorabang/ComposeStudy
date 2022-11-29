@@ -1,6 +1,7 @@
 package soora.example.composelisttest
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -75,9 +76,8 @@ fun TestListView(
             items(count) {
                 TestListItem(
                     order = it,
-                    viewModel.uiState.selectedPosition != -1 && viewModel.uiState.selectedPosition == it,
-                    viewModel.uiState.selectedPosition == -1 || viewModel.uiState.selectedPosition == it,
-                    viewModel.uiState.progressValue,
+                    focused = viewModel.uiState.selectedPosition == -1 || viewModel.uiState.selectedPosition == it,
+                    1f,
                     clickListener,
                 )
             }
@@ -88,20 +88,24 @@ fun TestListView(
 @Composable
 fun TestListItem(
     order: Int,
-    selected: Boolean = false,
     focused: Boolean = false,
-    progressTargetValue: Float = 0f,
+    progressTargetValue: Float = 1f,
     onClick: (Int) -> Unit = {}
 ) {
     var progress by remember { mutableStateOf(0f) }
-    var finished by remember { mutableStateOf(false) }
+    var selected by remember { mutableStateOf(false) }
 
     val progressAnimDuration = 500
-    val progressAnimation by animateFloatAsState(targetValue = progress, animationSpec = tween(
-        durationMillis = progressAnimDuration, easing = LinearOutSlowInEasing
-    ), finishedListener = {
-        finished = true
-    })
+    val progressAnimation by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = tween(
+            durationMillis = progressAnimDuration, easing = LinearOutSlowInEasing
+        ),
+        finishedListener = {
+            selected = false
+            progress = 0f
+        }
+    )
 
     Box(modifier = Modifier
         .alpha(if (focused) 1f else 0.3f)
@@ -109,39 +113,40 @@ fun TestListItem(
         .border(width = 4.dp, color = Color.Black)
         .fillMaxWidth()
         .height(100.dp)
-        .width(300.dp)) {
-        Card(
-            modifier = Modifier
-                .clickable(
-                    // no ripple effect
-                    interactionSource = MutableInteractionSource(), indication = null, onClick = {
-                        progress = 0f
-                        finished = false
-                        onClick.invoke(order)
-                    })
-
-        ) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                var listtext = "Compose List Text $order"
-                if (order == 0) {
-                    listtext = "Go to DetailActivity"
-                }
-                Text(text = listtext, textAlign = TextAlign.Center)
+        .width(300.dp)
+        .clickable(
+            // no ripple effect
+            interactionSource = MutableInteractionSource(),
+            indication = null,
+            onClick = {
+                onClick.invoke(order)
+                selected = true
+                progress = progressTargetValue
             }
+        )
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            var listtext = "Compose List Text $order"
+            if (order == 0) {
+                listtext = "Go to DetailActivity"
+            }
+            Text(text = listtext, textAlign = TextAlign.Center)
         }
+
+        Log.d("TEST", "order:$order, selected:$selected, progress:$progress, progressTargetValue:$progressTargetValue")
         if (selected) {
             LinearProgressIndicator(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp)
-                    .alpha(if (finished) 0f else 0.5f),
+                    .alpha(if (selected) 0.5f else 0f),
                 trackColor = Color.Transparent,
-                color = if (finished) Color.Transparent else Color.LightGray, //progress color,
+                color = if (selected) Color.LightGray else Color.Transparent , //progress color,
                 progress = progressAnimation
             )
-            LaunchedEffect(progressTargetValue) {
-                progress = progressTargetValue
-            }
         }
     }
 }
@@ -149,7 +154,7 @@ fun TestListItem(
 @Preview
 @Composable
 fun TestItemPreview() {
-    TestListItem(20, selected = true, focused = true)
+    TestListItem(20)
 }
 
 @Preview

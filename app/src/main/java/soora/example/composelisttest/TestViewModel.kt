@@ -18,14 +18,11 @@ class TestViewModel @Inject constructor(
     @ApplicationContext context: Context
 ) : ViewModel() {
     var uiState by mutableStateOf(UiState())
-    private val _uiStateFlow = MutableStateFlow(UiState())
-    val uiStateFlow = _uiStateFlow.asStateFlow()
 
     //외부에서 compose list의 동작을 변경
     fun scrollToPosition(position: Int) {
         updateScrollToPosition(position) // actual scroll
         updateSelectedPosition(position) // focused ui
-        updateProgressValue(0f) // scrollToPosition -> no select animation
     }
 
     fun updateSelectedPosition(index: Int) {
@@ -33,9 +30,6 @@ class TestViewModel @Inject constructor(
     }
 
     private fun updateScrollToPosition(position: Int) {
-//        _uiStateFlow.update {
-//            it.copy(scrollToPosition = position)
-//        }
         uiState = uiState.copy(scrollToPosition = position)
     }
 
