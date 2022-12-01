@@ -2,6 +2,8 @@ package soora.example.composelisttest
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +32,17 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
+    private val scrollListener = { state: Int ->
+        var text = when (state) {
+            1 -> "Start Scroll or Touch"
+            2 -> "Scroll Stopped"
+            else -> "Nothing"
+        }
+        Log.e("soora", "scrollListener $text")
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -39,7 +52,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    TestListView(count = 20, testViewModel, clickListItem)
+                    TestListView(count = 20, testViewModel, clickListItem, scrollListener)
                 }
             }
         }

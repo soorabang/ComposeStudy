@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun TestListView(
-    count: Int, viewModel: TestViewModel = hiltViewModel(), clickListener: (Int) -> Unit = {}
+    count: Int, viewModel: TestViewModel = hiltViewModel(), clickListener: (Int) -> Unit = {}, scrollListener: (Int) -> Unit = {}
 ) {
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -53,11 +53,16 @@ fun TestListView(
         }
     }
 
+    var scrollState : Int = -1
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 Log.e("soora", "onPreScroll ${listState.isScrollInProgress}")
                 //listState.isScrollInProgress- true 계속 호출됨.  처음 한번만 처리하도록 해야함.
+                if(scrollState == -1) {
+                    scrollState = 1
+                    scrollListener.invoke(scrollState)
+                }
                 return super.onPreScroll(available, source)
             }
 
@@ -80,6 +85,11 @@ fun TestListView(
                 // listState.isScrollInProgress - false
                 // SCROLL_STATE_IDLE
 
+                if (scrollState == 1) {
+                    scrollState = 2
+                    scrollListener.invoke(scrollState)
+                    scrollState = -1
+                }
                 return super.onPostFling(consumed, available)
             }
         }
